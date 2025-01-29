@@ -1,27 +1,18 @@
 import csv
-import datetime
+import os
 from io import StringIO
 import logging
 import requests
 import pymysql
 
-"""
-Alt3 Integration process
-
-1. Fetching Access Token from Zoho Account
-2. Fetching Database as CSV from Zoho Analytics
-3. Preprocess Data
-4. Maintain Connection to MariaDb
-5. CRUD to MariaDb
-6. [Add] Setup Scheduler
-"""
+# Best Selling Prodcut Integration process
 
 # Configure logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Initializing datetime
-current_time = ''
+# Define CSV file name
+CSV_FILENAME = 'best_selling_product.csv'
 
 
 def fetch_access_token():
@@ -64,22 +55,24 @@ def fetch_csv_database(access_token):
         }
 
         response = requests.get(
-            'https://analyticsapi.zoho.com/restapi/v2/workspaces/2457185000006351001/views/2457185000013242155/data', headers=headers)
+            'https://analyticsapi.zoho.com/restapi/v2/workspaces/2457185000006351001/views/2457185000015547681/data', headers=headers)
 
         if response.status_code == 200:
-            current_time = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-            filename = f'test_warehouse_{current_time}.csv'
+            if os.path.exists(CSV_FILENAME):
+                os.remove(CSV_FILENAME)
+                logging.info(f"[2] Removed old file: {CSV_FILENAME}")
 
-            with open(filename, 'wb') as file:
+            with open(CSV_FILENAME, 'wb') as file:
                 file.write(response.content)
 
-            logging.info("[2] Successfully fetched Zoho Analytics Data")
+            logging.info(
+                "[2] Successfully fetched and saved Best Selling Product Data")
 
         return response.content
 
     except:
         logging.error(
-            f"[2] An error occurred while fetching the Zoho Analytics: {str(e)}")
+            f"[2] An error occurred while fetching the Best Selling Product: {str(e)}")
         return None
 
 
@@ -105,17 +98,70 @@ def connect_to_mariadb():
     try:
         logging.info("[4] Connecting to MariaDB")
         connection = pymysql.connect(
-            host="34.124.224.50",
+            host="34.143.193.156",
             user="root",
             password="123456",
             database="test_warehouse_stock",
-            port="3306"
+            port=3306
         )
         logging.info("[4] Connected to MariaDB successfully")
         return connection
     except Exception as e:
         logging.error(f"[4] Failed to connect to MariaDB: {str(e)}")
         return None
+
+
+def upload_to_mariadb(headers, rows, connection):
+    try:
+        logging.info("[5] Preparing to upload data to MariaDB")
+        cursor = connection.cursor()
+
+        # Define the table name
+        table_name = "best_selling_prod"
+
+        # Drop existing table before recreating it
+        cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+        logging.info(f"[5] Dropped existing table: {table_name}")
+
+        # Escape headers with backticks for column names
+        escaped_headers = [f"`{header}`" for header in headers]
+
+        # Create table query with escaped column names
+        create_table_query = f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
+            {escaped_headers[0]} VARCHAR(255),
+            {escaped_headers[1]} VARCHAR(255),
+            {escaped_headers[2]} VARCHAR(255),
+            {escaped_headers[3]} INT,
+        )
+        """
+        cursor.execute(create_table_query)
+        logging.info("[5] Table created or already exists")
+
+        # Clean data before inserting
+        cleaned_rows = []
+        for row in rows:
+            cleaned_row = [
+                int(value) if value.isdigit() else None if value == '' else value
+                for value in row
+            ]
+            cleaned_rows.append(cleaned_row)
+
+        # Insert query with escaped column names
+        insert_query = f"""
+        INSERT INTO {table_name} ({', '.join(escaped_headers)})
+        VALUES ({', '.join(['%s' for _ in headers])})
+        """
+        cursor.executemany(insert_query, cleaned_rows)
+        connection.commit()
+        logging.info(f"[5] Successfully uploaded {
+                     len(cleaned_rows)} rows to MariaDB")
+    except Exception as e:
+        logging.error(
+            f"[5] An error occurred while uploading to MariaDB: {str(e)}")
+    finally:
+        if cursor:
+            cursor.close()
 
 
 def main():
@@ -135,6 +181,9 @@ def main():
 
     # Step 4: Maintain Connection to MariaDb
     connection = connect_to_mariadb()
+
+    # Step 5: CRUD to MariaDb
+    upload_to_mariadb(headers, rows, connection)
 
 
 if __name__ == '__main__':
