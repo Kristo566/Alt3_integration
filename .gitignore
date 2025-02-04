@@ -1,0 +1,10 @@
+# Environment variables
+.env
+
+# pip environment
+ENV/
+env.bak/
+venv.bak/
+__pycache__/
+
+*.csv

@@ -1,0 +1,35 @@
+2025-01-31 18:12:29,607 - INFO - Scheduler started. Waiting for the next scheduled job...
+2025-01-31 18:13:29,609 - INFO - Running script: c:\Users\Kristo Jeremy\OneDrive\Documents\For work\Luxehouze\Alt3-integration\src\analytics_script.py
+2025-01-31 18:13:38,928 - ERROR - Error from c:\Users\Kristo Jeremy\OneDrive\Documents\For work\Luxehouze\Alt3-integration\src\analytics_script.py:
+2025-01-31 18:13:31,802 - INFO - [Zoho Analytics: 0] Starting integration process...
+2025-01-31 18:13:31,802 - INFO - [Zoho Analytics: 1] Fetching Access Token from Zoho Account
+2025-01-31 18:13:32,933 - INFO - [Zoho Analytics: 1] Access token fetched successfully
+2025-01-31 18:13:32,933 - INFO - [Zoho Analytics: 2] Fetching Zoho Analytics Data
+2025-01-31 18:13:37,892 - INFO - [Zoho Analytics: 2] Successfully fetched and saved Zoho Analytics Data
+2025-01-31 18:13:37,893 - INFO - [Zoho Analytics: 3] Parsing CSV data
+2025-01-31 18:13:37,935 - INFO - [Zoho Analytics: 3] CSV parsing completed successfully
+2025-01-31 18:13:37,936 - INFO - [Zoho Analytics: 4] Connecting to MariaDB
+2025-01-31 18:13:38,594 - INFO - [Zoho Analytics: 4] Connected to MariaDB successfully
+2025-01-31 18:13:38,594 - INFO - [Zoho Analytics: 5] Uploading data to MariaDB
+2025-01-31 18:13:38,667 - INFO - [Zoho Analytics: 5] Dropped existing table: zoho_analytics_data
+2025-01-31 18:13:38,865 - INFO - [Zoho Analytics: 5] Successfully uploaded 5 rows to MariaDB
+2025-01-31 18:13:38,866 - INFO - [Zoho Analytics: 6] Integration process completed successfully!
+
+2025-01-31 18:13:38,928 - INFO - Successfully executed: c:\Users\Kristo Jeremy\OneDrive\Documents\For work\Luxehouze\Alt3-integration\src\analytics_script.py
+2025-01-31 18:14:38,930 - INFO - Running script: c:\Users\Kristo Jeremy\OneDrive\Documents\For work\Luxehouze\Alt3-integration\src\best_selling_script.py
+2025-01-31 18:14:44,296 - ERROR - Error from c:\Users\Kristo Jeremy\OneDrive\Documents\For work\Luxehouze\Alt3-integration\src\best_selling_script.py:
+2025-01-31 18:14:40,241 - INFO - [Best Selling: 0] Starting integration process...
+2025-01-31 18:14:40,242 - INFO - [Best Selling: 1] Fetching Access Token from Zoho Account
+2025-01-31 18:14:41,289 - INFO - [Best Selling: 1] Access token fetched successfully
+2025-01-31 18:14:41,289 - INFO - [Best Selling: 2] Fetching Best Selling Product Data
+2025-01-31 18:14:43,382 - INFO - [Best Selling: 2] Successfully fetched and saved Best Selling Product Data
+2025-01-31 18:14:43,383 - INFO - [Best Selling: 3] Parsing CSV data
+2025-01-31 18:14:43,385 - INFO - [Best Selling: 3] CSV parsing completed successfully
+2025-01-31 18:14:43,385 - INFO - [Zoho Analytics: 4] Connecting to MariaDB
+2025-01-31 18:14:44,011 - INFO - [Zoho Analytics: 4] Connected to MariaDB successfully
+2025-01-31 18:14:44,011 - INFO - [Best Selling: 5] Uploading data to MariaDB
+2025-01-31 18:14:44,063 - INFO - [Best Selling: 5] Dropped existing table: best_selling_prod
+2025-01-31 18:14:44,237 - INFO - [Best Selling: 5] Successfully uploaded 5 rows to MariaDB
+2025-01-31 18:14:44,238 - INFO - [Best Selling: 6] Integration process completed successfully!
+
+2025-01-31 18:14:44,297 - INFO - Successfully executed: c:\Users\Kristo Jeremy\OneDrive\Documents\For work\Luxehouze\Alt3-integration\src\best_selling_script.py
