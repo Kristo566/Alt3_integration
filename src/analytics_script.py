@@ -12,14 +12,14 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Constants
-load_dotenv()
+load_dotenv(override=True)
 
 CSV_FILENAME = 'test_warehouse.csv'
 ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
 ZOHO_CLIENT_SECRET = os.getenv("ZOHO_CLIENT_SECRET")
 ZOHO_REFRESH_TOKEN = os.getenv("ZOHO_REFRESH_TOKEN")
 ZOHO_ANALYTICS_ORGID = os.getenv("ZOHO_ANALYTICS_ORGID")
-ZOHO_WORKSPACE_ID = os.getenv('2457185000006351001')
+ZOHO_WORKSPACE_ID = os.getenv('ZOHO_WORKSPACE_ID')
 ZOHO_VIEW_ID = os.getenv("ZOHO_VIEW_ID_ZOHOANALYTICS")
 DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
