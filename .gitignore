@@ -7,4 +7,7 @@ env.bak/
 venv.bak/
 __pycache__/
 
+# csv file
 *.csv
+
+logs/

@@ -53,12 +53,12 @@ def fetch_access_token():
                 return access_token
             else:
                 logging.error(
-                    f"[Zoho Analytics: 1] Failed to fetch access token. Retrying in 5s...")
-                time.sleep(5)
+                    f"[Zoho Analytics: 1] Failed to fetch access token. Retrying in 1h...")
+                time.sleep(3600)
         except Exception as e:
             logging.error(f"[Zoho Analytics: 1] Error fetching access token: {
-                          str(e)}. Retrying in 5s...")
-            time.sleep(5)
+                          str(e)}. Retrying in 1h...")
+            time.sleep(3600)
 
 # Function to fetch CSV data (Retries until successful)
 
@@ -85,12 +85,12 @@ def fetch_csv_database(access_token):
                 return response.content
             else:
                 logging.error(
-                    f"[Zoho Analytics: 2] Failed to fetch data. Retrying in 5s...")
-                time.sleep(5)
+                    f"[Zoho Analytics: 2] Failed to fetch data. Retrying in 1h...")
+                time.sleep(3600)
         except Exception as e:
             logging.error(f"[Zoho Analytics: 2] Error fetching data: {
-                          str(e)}. Retrying in 5s...")
-            time.sleep(5)
+                          str(e)}. Retrying in 1h...")
+            time.sleep(3600)
 
 # Function to parse CSV (Retries until successful)
 
@@ -102,14 +102,14 @@ def parse_csv_response(response_data):
             csv_data = StringIO(response_data.decode('utf-8'))
             csv_reader = csv.reader(csv_data)
             headers = next(csv_reader)
-            rows = [row for i, row in enumerate(csv_reader) if i < 5]
+            rows = [row for i, row in enumerate(csv_reader)]
             logging.info(
                 "[Zoho Analytics: 3] CSV parsing completed successfully")
             return headers, rows
         except Exception as e:
             logging.error(f"[Zoho Analytics: 3] Error parsing CSV: {
-                          str(e)}. Retrying in 5s...")
-            time.sleep(5)
+                          str(e)}. Retrying in 1h...")
+            time.sleep(3600)
 
 # Function to maintain database connection
 
@@ -145,8 +145,8 @@ def connect_to_mariadb():
             return connection
         except Exception as e:
             logging.error(f"[Zoho Analytics: 4] Failed to connect to MariaDB: {
-                          str(e)}. Retrying in 5s...")
-            time.sleep(5)
+                          str(e)}. Retrying in 1h...")
+            time.sleep(3600)
 
 
 # Function to upload data (Retries until successful)
@@ -208,8 +208,8 @@ def upload_to_mariadb(headers, rows, connection):
             return  # Exit loop after success
         except Exception as e:
             logging.error(f"[Zoho Analytics: 5] Error uploading to MariaDB: {
-                          str(e)}. Retrying in 5s...")
-            time.sleep(5)
+                          str(e)}. Retrying in 1h...")
+            time.sleep(3600)
 
 # Main Process (Runs Until Success)
 
