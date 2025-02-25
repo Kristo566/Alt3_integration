@@ -43,8 +43,8 @@ def run_script(script_path):
 
 
 # Schedule tasks (run once a day)
-schedule.every().day.at("18:30").do(run_script, script_path=FIRST_SCRIPT)
-schedule.every().day.at("18:45").do(run_script, script_path=SECOND_SCRIPT)
+schedule.every().day.at("12:40").do(run_script, script_path=FIRST_SCRIPT)
+schedule.every().day.at("12:45").do(run_script, script_path=SECOND_SCRIPT)
 
 logging.info("Scheduler started. Waiting for the next scheduled job...")
 
