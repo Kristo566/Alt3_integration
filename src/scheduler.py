@@ -19,6 +19,10 @@ SECOND_SCRIPT = os.path.join(SCRIPTS_DIR, "best_selling_script.py")
 # Paths to log files
 CRON_LOG_FILE = os.path.join(LOGS_DIR, "scheduler.log")
 
+# Script time
+FIRST_TIMER = os.getenv("FIRST_SCRIPT_TIME")
+SECOND_TIMER = os.getenv("SECOND_SCRIPT_TIME")
+
 # Configure logging
 logging.basicConfig(filename=CRON_LOG_FILE, level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -43,8 +47,8 @@ def run_script(script_path):
 
 
 # Schedule tasks (run once a day)
-schedule.every().day.at("15:22").do(run_script, script_path=FIRST_SCRIPT)
-schedule.every().day.at("15:23").do(run_script, script_path=SECOND_SCRIPT)
+schedule.every().day.at(FIRST_TIMER).do(run_script, script_path=FIRST_SCRIPT)
+schedule.every().day.at(SECOND_TIMER).do(run_script, script_path=SECOND_SCRIPT)
 
 logging.info("Scheduler started. Waiting for the next scheduled job...")
 

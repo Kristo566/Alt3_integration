@@ -19,7 +19,7 @@ ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
 ZOHO_CLIENT_SECRET = os.getenv("ZOHO_CLIENT_SECRET")
 ZOHO_REFRESH_TOKEN = os.getenv("ZOHO_REFRESH_TOKEN")
 ZOHO_ANALYTICS_ORGID = os.getenv("ZOHO_ANALYTICS_ORGID")
-ZOHO_WORKSPACE_ID = os.getenv('ZOHO_WORKSPACE_ID')
+ZOHO_WORKSPACE_ID = os.getenv('ZOHO_WORKSPACE_ID_1')
 ZOHO_VIEW_ID = os.getenv("ZOHO_VIEW_ID_ZOHOANALYTICS")
 DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
@@ -68,21 +68,40 @@ def fetch_csv_database(access_token):
         try:
             logging.info("[Zoho Analytics: 2] Fetching Zoho Analytics Data")
 
+            # Hit the first API for creating data based on query
+
             headers = {
-                'Authorization': f'Zoho-oauthtoken {access_token}',
+                'Authorization': f'Bearer {access_token}',
                 'ZANALYTICS-ORGID': ZOHO_ANALYTICS_ORGID
             }
 
-            url = f'https://analyticsapi.zoho.com/restapi/v2/workspaces/{
-                ZOHO_WORKSPACE_ID}/views/{ZOHO_VIEW_ID}/data'
+            url = 'https://analyticsapi.zoho.com/restapi/v2/bulk/workspaces/' + \
+                ZOHO_WORKSPACE_ID + '/views/' + ZOHO_VIEW_ID + \
+                "/data?CONFIG={'responseFormat':'csv'}"
             response = requests.get(url, headers=headers)
 
             if response.status_code == 200:
+                job_id = response.json()['data']['jobId']
+
+                # Hit the second API for extracting CSV
+
+                headers = {
+                    'Authorization': f'Bearer {access_token}',
+                    'ZANALYTICS-ORGID': ZOHO_ANALYTICS_ORGID
+                }
+                url = f"https://analyticsapi.zoho.com/restapi/v2/bulk/workspaces/" + \
+                    ZOHO_WORKSPACE_ID + "/exportjobs/" + job_id+"/data"
+
+                response_csv = requests.get(url, headers=headers)
+
                 with open(CSV_FILENAME, 'wb') as file:
-                    file.write(response.content)
+                    file.write(response_csv.content)
+
                 logging.info(
                     "[Zoho Analytics: 2] Successfully fetched and saved Zoho Analytics Data")
-                return response.content
+
+                return response_csv.content
+
             else:
                 logging.error(
                     f"[Zoho Analytics: 2] Failed to fetch data. Retrying in 1h...")
@@ -174,21 +193,9 @@ def upload_to_mariadb(headers, rows, connection):
                 {escaped_headers[0]} VARCHAR(255),
                 {escaped_headers[1]} VARCHAR(255),
                 {escaped_headers[2]} VARCHAR(255),
-                {escaped_headers[3]} VARCHAR(255),
+                {escaped_headers[3]} INT,
                 {escaped_headers[4]} VARCHAR(255),
-                {escaped_headers[5]} VARCHAR(255),
-                {escaped_headers[6]} VARCHAR(255),
-                {escaped_headers[7]} INT,
-                {escaped_headers[8]} INT,
-                {escaped_headers[9]} INT,
-                {escaped_headers[10]} VARCHAR(255),
-                {escaped_headers[11]} VARCHAR(255),
-                {escaped_headers[12]} VARCHAR(255),
-                {escaped_headers[13]} VARCHAR(255),
-                {escaped_headers[14]} INT,
-                {escaped_headers[15]} INT,
-                {escaped_headers[16]} INT,
-                {escaped_headers[17]} VARCHAR(255)
+                {escaped_headers[5]} VARCHAR(255)
             )
             """
             cursor.execute(create_table_query)
